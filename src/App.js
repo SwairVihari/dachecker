@@ -1,23 +1,49 @@
 import logo from './logo.svg';
 import './App.css';
-
+import axios from 'axios'
+import React, {useEffect, useState} from 'react'
+import Styles from "./app.module.css"
 function App() {
+
+  const [domain, setDomain] = useState()
+  const [da, setDa] = useState()
+  const [pageRank, setPageRank] = useState()
+  const [spamScore, setSpamScore] = useState()
+  const [loading, setLoading] = useState(true)
+  const fetchData = async(domain) => {
+    try{
+    const options = {
+      headers: {
+        'x-rapidapi-host': 'domain-authority1.p.rapidapi.com',
+        'x-rapidapi-key': '370b9104c3mshe7540c364e03e41p18e5e2jsnaf705aa9e533'
+      }
+    };
+    const {data} = await axios.get(`https://domain-authority1.p.rapidapi.com/domain/${domain}`, options);
+    setDa(data[0].da);
+    setPageRank(data[0].page_rank);
+    setSpamScore(data[0].spam_score)
+    setLoading(false);
+    console.log(data[0]);
+  }
+  catch(error){
+    alert("Invalid Domain Name Please Try Again")
+
+  }
+  }
+
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={Styles.app}>
+      <input placeholder='Enter Domain Here' className={Styles.input} type='text' onChange={(e)=>{setDomain(e.target.value)}}/>
+      <button className={Styles.button} onClick={()=>{fetchData(domain)}}>Submit</button>
+    {!loading? 
+    <div>
+    <p  className={Styles.data}>{`Domain Authority Score: ${da}`}</p>
+    <p  className={Styles.data}>{`Page Rank : ${pageRank}`}</p>
+    <p  className={Styles.data}>{`Spam Score :${spamScore}`}</p></div>:""}
+     
+      
     </div>
   );
 }
